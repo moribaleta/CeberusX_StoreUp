@@ -1,0 +1,82 @@
+<html>
+
+<head>
+    <title>StoreUp</title>
+    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
+    <script src="resources/library/jquery-3.0.0.min.js"></script>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="resources/css/main-style.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Mukta">
+          <style>
+                .banner .title {
+                  font-family: 'Mukta', serif;
+                  font-size: 30px;
+                  
+                }
+                
+              </style>
+</head>
+
+<body>
+    <!-- <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">StoreUp</a>
+            </div>
+        </div>
+    </nav> -->
+    <div class="banner">
+        
+        <img class="logo-company" src="resources/images/CEBERUS%20LOGO.png">
+        
+        <p class="title">StoreUP</p>
+        <img class="logo" src="resources/images/STOREUP ICON.png">
+    </div>
+    <div class="container content" id="content-index">
+        <div class="content-flow">
+            <a class="flow-item" href="products.html">
+                <img class="flow-item-image"  src="resources/images/PRODUCTS.png">
+                <!-- <p class="flow-item-title">
+                    Products
+                </p> -->
+            </a>
+            <a class="flow-item" href="suppliers.html">
+                <img class="flow-item-image"  src="resources/images/SUPPLIERS.png">
+                <!-- <p class="flow-item-title">
+                    Suppliers
+                </p> -->
+            </a>
+            <a class="flow-item" href="orders.html">
+                <img class="flow-item-image"  src="resources/images/ORDERS.png">
+                <!-- <p class="flow-item-title">
+                    Orders
+                </p> -->
+            </a>
+            <a class="flow-item" href="history.html">
+                <img class="flow-item-image"  src="resources/images/HISTORY.png">
+                <!-- <p class="flow-item-title">
+                    History
+                </p> -->
+            </a>
+        </div>
+    </div>
+    <script>
+        let images = document.getElementsByClassName("flow-item-image");
+        for (let image of images) {
+            image.addEventListener("load", fadeImg);
+            image.style.opacity = "0";
+        }
+
+        function fadeImg() {
+            this.style.transition = "opacity 2s";
+            this.style.opacity = "1";
+        }
+    </script>
+    <!-- <script src="resources/js/datahandler.js"></script>
+    <script src="../moribaleta/random.js"></script>
+    <script src="../moribaleta/company_list.js"></script> -->
+    
+</body>
+
+</html>

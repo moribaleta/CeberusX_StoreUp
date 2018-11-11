@@ -1,0 +1,481 @@
+<html>
+
+<head>
+    <title>StoreUp (Suppliers)</title>
+    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
+    <script src="resources/library/jquery-3.0.0.min.js"></script>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resources/library/vue.js"></script>
+    <link rel="stylesheet" href="resources/css/main-style.css">
+    <script src="resources/js/datahandler.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top header">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">StoreUp (Suppliers)</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container content" id="content-post">
+
+        <div id="modal-supplier" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Product Suppliers</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="data-table">
+                            <form method="post" enctype="multipart/form-data">
+                                <p>supplier name</p>
+                                <input type="text" name="name" class="input" v-model="data_input.name"><br><br>
+                                <p>address</p>
+                                <input type="text" name="supplier" class="input" v-model="data_input.address"><br><br>
+                                <p>contact number</p>
+                                <input type="text" name="supplier" class="input" v-model="data_input.contactnumber"><br><br>
+                                <p>contact person</p>
+                                <input type="text" name="supplier" class="input" v-model="data_input.person"><br><br>
+                                <p>tin</p>
+                                <input type="text" name="supplier" class="input" v-model="data_input.tin"><br><br>
+                                
+                                <!-- <input type="text" name="type" class="input"><br><br> -->
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" data-toggle="modal"
+                            data-target="#modal-search">Search Supplier</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="onsave">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="modal-search" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Search for Suppliers</h4>
+                    </div>
+                    <div class="modal-body search_result">
+                        <input class="input-search" placeholder="search" v-model='search'>
+                        <button type="button" class="btn btn-default" v-on:click="onsearch">Search</button>
+                        <br>
+                        <br>
+                        <select class="input input-select input-establishment" v-model="search_category_val">
+                            <option v-for='item in search_category' v-bind:value="item">{{item}}</option>
+                        </select>
+
+                        <li class="data-list-item row" v-for='item,index in search_result'>
+                            <!-- {{item}} -->
+                            <div class="col-sm-1">
+                                <p class="count">{{(index+1)}}</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <h6 class="name">{{item.Company}}</h6>
+                                    <h6 class="product_type">Delivery Lead Time: {{item.DeliveryLeadTime}}</h6>
+                                    <h6 class="supplier">Completeness of Delivery: {{item.CompletenessofDelivery}}</h6>
+                                    <h6 class="supplier">Overall Quality of Deliveries:
+                                        {{item.OverallQualityofDeliveries}}</h6>
+                                    <h6 class="supplier">After Sales Support: {{item.AftersalesSupport}}</h6>
+                                    <h6 class="supplier">Price: {{item.Price}}</h6>
+                                    <h6 class="supplier">Score: {{item.Score}}</h6>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn" data-dismiss="modal" v-on:click="selectSearch(index)">Select</button>
+                            </div>
+                        </li>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="data-table">
+            <ul class="data-list">
+                <li class="data-list-item row " v-for='item,index in supplier_list'>
+                    <!-- {{item}} -->
+                    <div class="col-sm-1">
+                        <p class="count">{{(index+1)}}</p>
+                    </div>
+                    <div class="col-sm-11">
+                        <h4 class="name">{{item.Name}}</h4>
+                        <h6 class="product_type">Contact Number: {{item.ContactNumber}}</h6>
+                        <h6 class="supplier">Contact Person: {{item.Contact}}</h6>
+                        <h6 class="supplier">Address: {{item.Address}}</h6>
+                        <h6 class="supplier">Tin: {{item.Tin}}</h6>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="fixed-action-btn">
+            <!-- <button type="button" id="add-report" class="button-view hide" data-toggle="modal" data-target="#modal-supplier">
+            </button> -->
+
+            <button type="button" id="add-report" class="button-view" data-toggle="modal" data-target="#modal-supplier">add
+                supplier
+            </button>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#content-post',
+            data: {
+                product_list: ['asd', 'asd', 'ddd', 'dsds'],
+                supplier_list: [],
+                data_input: {
+                    name: null,
+                    contactnumber: null,
+                    address: null,
+                    contact: null,
+                    tin: null,
+                    saved: "yes",
+                },
+                search_category: ["Handicrafts",
+                    "Antiques",
+                    "Art and craft supplies",
+                    "Art dealers and galleries",
+                    "Camera and photographic supplies",
+                    "Digital art",
+                    "Memorabilia",
+                    "Music store",
+                    "Sewing, needlework, and fabrics",
+                    "Stamp and coin",
+                    "Stationary, printing and writing paper",
+                    "Vintage and collectibles",
+                    "Clothing",
+                    "Furniture",
+                    "Baby products",
+                    "Safety and health",
+                    "Bath and body",
+                    "Fragrances and perfumes",
+                    "Makeup and cosmetics",
+                    "Audio books",
+                    "Digital content",
+                    "Educational and textbooks",
+                    "Fiction and nonfiction",
+                    "Magazines",
+                    "Publishing and printing",
+                    "Rare and used book",
+                    "Accounting",
+                    "Advertising",
+                    "Agricultural",
+                    "Architectural, engineering, and surveying services",
+                    "Chemicals and allied products",
+                    "Commercial photography, art, and graphics",
+                    "Construction",
+                    "Consulting services",
+                    "Educational services",
+                    "Equipment rentals and leasing services",
+                    "Equipment repair services",
+                    "Hiring services",
+                    "Industrial and manufacturing supplies",
+                    "Mailing lists",
+                    "Marketing",
+                    "Multi-level marketing",
+                    "Office and commercial furniture",
+                    "Office supplies and equipment",
+                    "Publishing and printing",
+                    "Quick copy and reproduction services",
+                    "Shipping and packing",
+                    "Stenographic and secretarial support services",
+                    "Wholesale",
+                    "Children's clothing",
+                    "Men's clothing",
+                    "Women's clothing",
+                    "Shoes",
+                    "Military and civil service uniforms",
+                    "Accessories",
+                    "Retail ",
+                    "Wholesale",
+                    "Fashion jewelry",
+                    "Computer and data processing services",
+                    "Desktops, laptops, and notebooks",
+                    "Digital content",
+                    "eCommerce services",
+                    "Maintenance and repair services",
+                    "Monitors and projectors",
+                    "Networking",
+                    "Online gaming",
+                    "Parts and accessories",
+                    "Peripherals",
+                    "Software",
+                    "Training services",
+                    "Web hosting and design",
+                    "Business and secretarial schools",
+                    "Child daycare services",
+                    "Colleges and universities",
+                    "Dance halls, studios, and schools",
+                    "Elementary and secondary schools",
+                    "Vocational and trade schools",
+                    "Cameras, camcorders, and equipment",
+                    "Cell phones, PDAs, and pagers",
+                    "General electronic accessories",
+                    "Home audio",
+                    "Home electronics",
+                    "Security and surveillance",
+                    "Telecommunication equipment and sales",
+                    "Telecommunication services",
+                    "Telephone cards",
+                    "Memorabilia",
+                    "Movie tickets",
+                    "Movies",
+                    "Musi",
+                    "Cable, satellite, and other pay TV and radio",
+                    "Adult digital content",
+                    "Theater tickets",
+                    "Toys and games",
+                    "Slot machines",
+                    "Digital content",
+                    "Entertainers",
+                    "Gambling",
+                    "Online games",
+                    "Video games and systems",
+                    "Accounting",
+                    "Collection agency",
+                    "Commodities and futures exchange",
+                    "Consumer credit reporting agencies",
+                    "Debt counseling service",
+                    "Credit union",
+                    "Currency dealer and currency exchange",
+                    "Escrow",
+                    "Finance company",
+                    "Financial and investment advice",
+                    "Insurance",
+                    "Investments",
+                    "Money service business",
+                    "Mortgage brokers or dealers",
+                    "Online gaming currency",
+                    "Paycheck lender or cash advance",
+                    "Prepaid and stored value cards",
+                    "Real estate agent",
+                    "Remittance",
+                    "Rental property management",
+                    "Security brokers and dealers",
+                    "Wire transfer and money order",
+                    "Alcoholic beverages",
+                    "Catering services",
+                    "Coffee and tea",
+                    "Gourmet foods",
+                    "Specialty and miscellaneous food stores",
+                    "Restaurant",
+                    "Tobacco",
+                    "Vitamins and supplements",
+                    "Florist",
+                    "Gift, card, novelty, and souvenir shops",
+                    "Gourmet foods",
+                    "Nursery plants and flowers",
+                    "Party supplies",
+                    "Government services",
+                    "Drugstore",
+                    "Dental care",
+                    "Medical care",
+                    "Medical equipment and supplies",
+                    "Vision care",
+                    "Vitamins and supplements",
+                    "Antiques",
+                    "Appliances",
+                    "Art dealers and galleries",
+                    "Bed and bath",
+                    "Construction material",
+                    "Drapery, window covering, and upholstery",
+                    "Exterminating and disinfecting services",
+                    "Fireplace, and fireplace screens",
+                    "Furniture",
+                    "Garden supplies",
+                    "Glass, paint, and wallpaper",
+                    "Hardware and tools",
+                    "Home decor",
+                    "Housewares",
+                    "Kitchenware",
+                    "Landscaping",
+                    "Rugs and carpets",
+                    "Security and surveillance equipment",
+                    "Swimming pools and spas",
+                    "Charity",
+                    "Political",
+                    "Religion",
+                    "Other",
+                    "Personal",
+                    "Educational",
+                    "Medication and supplements",
+                    "Pet shops, pet food, and supplies",
+                    "Specialty or rare pets",
+                    "Veterinary services.",
+                    "Membership services",
+                    "Merchandise",
+                    "Services",
+                    "Chemicals and allied products",
+                    "Department store",
+                    "Discount store",
+                    "Durable goods",
+                    "Non-durable goods",
+                    "Used and secondhand store",
+                    "Variety store",
+                    "Advertising",
+                    "Shopping services and buying clubs",
+                    "Career services",
+                    "Carpentry",
+                    "Child care services",
+                    "Cleaning and maintenance",
+                    "Commercial photography",
+                    "Computer and data processing services",
+                    "Computer network services",
+                    "Consulting services",
+                    "Counseling services",
+                    "Courier services",
+                    "Dental care",
+                    "eCommerce services",
+                    "Electrical and small appliance repair",
+                    "Entertainment",
+                    "Equipment rental and leasing services",
+                    "Event and wedding planning",
+                    "Gambling",
+                    "General contractors",
+                    "Graphic and commercial design",
+                    "Health and beauty spas",
+                    "IDs, licenses, and passports",
+                    "Importing and exporting",
+                    "Information retrieval services",
+                    "Insurance - auto and home",
+                    "Insurance - life and annuity",
+                    "Landscaping and horticultural",
+                    "Legal services and attorneys",
+                    "Local delivery service",
+                    "Lottery and contests",
+                    "Medical care",
+                    "Membership clubs and organizations",
+                    "Misc. publishing and printing",
+                    "Moving and storage",
+                    "Online dating",
+                    "Photofinishing",
+                    "Photographic studios - portraits",
+                    "Protective and security services",
+                    "Quick copy and reproduction services",
+                    "Radio, television, and stereo repair",
+                    "Real estate agent",
+                    "Rental property management",
+                    "Reupholstery and furniture repair",
+                    "Services",
+                    "Shipping and packing",
+                    "Swimming pool services",
+                    "Tailors and alterations",
+                    "Telecommunication service",
+                    "Utilities",
+                    "Vision care",
+                    "Watch, clock, and jewelry repair",
+                    "thletic shoes",
+                    "Bicycle shop, service, and repair",
+                    "Boating, sailing and accessories",
+                    "Camping and outdoors",
+                    "Dance halls, studios, and schools",
+                    "Exercise and fitness",
+                    "Fan gear and memorabilia",
+                    "Firearm accessories",
+                    "Firearms",
+                    "Hunting",
+                    "Knives",
+                    "Martial arts weapons",
+                    "Sport games and toys",
+                    "Sporting equipment",
+                    "Swimming pools and spas",
+                    "Arts and crafts",
+                    "Camera and photographic supplies",
+                    "Hobby, toy, and game shops",
+                    "Memorabilia",
+                    "Music store - instruments and sheet music",
+                    "Stamp and coin",
+                    "Stationary, printing, and writing paper",
+                    "Vintage and collectibles",
+                    "Video games and systems",
+                    "Airline",
+                    "Auto rental",
+                    "Bus line",
+                    "Cruises",
+                    "Lodging and accommodations",
+                    "Luggage and leather goods",
+                    "Recreational services",
+                    "Sporting and recreation camps",
+                    "Taxicabs and limousines",
+                    "Timeshares",
+                    "Tours",
+                    "Trailer parks or campgrounds",
+                    "Transportation services - other",
+                    "Travel agency",
+                    "Auto dealer - new and usedAuto dealer - used only",
+                    "Aviation",
+                    "Boat dealer",
+                    "Mobile home dealer",
+                    "Motorcycle dealer",
+                    "Recreational and utility trailer dealer",
+                    "Recreational vehicle dealer",
+                    "Vintage and collectibles",
+                    "New parts and supplies - motor vehicle",
+                    "Used parts - motor vehicle",
+                    "Audio and video",
+                    "Auto body repair and paint",
+                    "Auto rental",
+                    "Auto service",
+                    "Automotive tire supply and service",
+                    "Boat rental and leases",
+                    "Car wash",
+                    "Motor home and recreational vehicle rental",
+                    "Tools and equipment",
+                    "Towing service",
+                    "Truck and utility trailer rental",
+                    "Accessories"
+                ],
+                search_category_val: null,
+                search: null,
+                search_result: []
+            },
+            methods: {
+                initApp: function () {
+                    //getProducts(this.setProducts)
+                    getSupplier("yes", this.setSuppliers)
+                },
+                setSuppliers: function (data) {
+                    this.supplier_list = data
+                },
+                viewsupplier: function () {
+                    document.getElementById('add-report').click()
+                },
+                onsave: function () {
+                    addNewSupplier(this.data_input, this.initApp)
+                },
+                onsearch: function () {
+                    console.log("hi")
+                    //var search = (this.search != "") ? this.search : this.search_category_val
+                    if (this.search != "" && this.search != null) {
+                        searchSupplier(this.search, this.setResult)
+                    }else{
+                        console.log(this.search_category_val)
+                        searchSupplier(this.search_category_val, this.setResult)
+                    }
+                },
+
+                setResult: function (data) {
+                    this.search_result = data
+                },
+                selectSearch: function (index) {
+                    this.data_input.name = this.search_result[index].Company
+                    document.getElementById('add-report').click()
+                }
+
+
+            }
+        })
+
+        app.initApp()
+    </script>
+</body>
+
+</html>

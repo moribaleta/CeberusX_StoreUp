@@ -1,0 +1,155 @@
+<html>
+
+<head>
+    <title>StoreUp (Orders)</title>
+    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
+    <script src="resources/library/jquery-3.0.0.min.js"></script>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resources/library/vue.js"></script>
+    <link rel="stylesheet" href="resources/css/main-style.css">
+    <script src="resources/js/datahandler.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top header">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">StoreUp (Orders)</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container content" id="content-post">
+        <div id="modal-product" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Create New Orders</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <ul class="modal-list">
+                                <h5>Order Items</h5>
+
+                            <li class="modal-list-item row" v-for='item,index in product_list'>
+                                <!-- {{item}} -->
+                                <div class="col-md-1"><p class="count">{{(index+1)}}.</p></div>
+                                <div class="col-md-9 modal-list-item-data">
+                                    <p class="name">{{item.Name}}</p>
+                                    <p class="supplier">{{item.Type}}</p>
+                                    <p class="supplier">{{item.Supplier}}</p>
+                                </div>
+                                <div class="col-md-2 modal-list-button">
+                                    <button type="button" class='inc-btn' v-on:click="addProduct(index)">+</button>
+                                    <button type="button" class='inc-btn' v-on:click="removeProduct(index)">-</button>
+                                </div>
+                            </li>
+
+
+                            <form method="post" enctype="multipart/form-data">
+                                <h5>Order Items</h5>
+                                <ul class="modal-list">
+                                    <li class="modal-list-item" v-for='item,index in data_model.product_list'>
+                                        <p class="count">{{(index+1)}}.</p>
+                                        <p class="name">{{item.Name}}</p>
+                                        <p class="supplier">{{item.Type}}</p>
+                                        <p class="supplier">{{item.Supplier}}</p>
+                                    </li>
+                                </ul>
+                                <p>ETA</p>
+                                <input type="text" name="name" class="input" v-model="data_model.eta">
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="onsave">Save</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="data-table">
+            <ul class="data-list">
+                <li class="data-list-item row card-item" v-for='item,index in order_list'>
+                    <!-- {{item}} -->
+                    <div class="col">
+                        <p class="count">{{(index+1)}}</p>
+                    </div>
+                    <div class="col-sm-11">
+                        <h4 class="name">{{item.ID}}</h4>
+                        <h7 class="supplier">Expected Time of Arrival: {{item.ETA}}</h7>
+                        <h7 class="supplier">TimeStamp: {{item.TIMESTAMP}}</h7>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+
+
+        <div class="fixed-action-btn">
+            <button type="button" id="add-report" class="button-view" data-toggle="modal" data-target="#modal-product">add
+                report
+            </button>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#content-post',
+            data: {
+                product_list: ['asd', 'asd', 'ddd', 'dsds'],
+                data_model: {
+                    eta: null,
+                    product_list: [],
+                },
+                order_list: []
+            },
+            methods: {
+                initApp: function () {
+                    getProducts(this.setProducts)
+                    getOrders(this.setOrders)
+                },
+                setProducts: function (product_list) {
+                    this.product_list = product_list
+                },
+                getOrders: function () {
+                    getOrders()
+                },
+                setOrders: function (orders) {
+                    this.order_list = orders
+                },
+                onsave: function () {
+                    addNewOrder(this.data_model, this.initApp)
+
+                },
+                addProduct: function (index) {
+                    this.data_model.product_list.push(this.product_list[index]);
+                },
+
+                removeProduct: function (index) {
+                    var x = null;
+                    for (var i = 0; i < this.data_model.product_list.length; i++) {
+                        if (this.data_model.product_list[i].ID == this.product_list[index].ID) {
+                            x = i
+                            break
+                        }
+                    }
+                    console.log('hi')
+                    if (x !== null) {
+                        console.log('remove')
+                        this.data_model.product_list.splice(x, 1);
+                    }
+                }
+
+            }
+        })
+
+        app.initApp()
+    </script>
+</body>
+
+</html>

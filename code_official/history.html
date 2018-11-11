@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <title>StoreUp (History)</title>
+    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
+    <script src="resources/library/jquery-3.0.0.min.js"></script>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resources/library/vue.js"></script>
+    <link rel="stylesheet" href="resources/css/main-style.css">
+    <script src="resources/js/datahandler.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top header">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">StoreUp (History)</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container content" id="content-post">
+        <div class="data-table">
+            <ul class="data-list">
+                <li class="data-list-item row card-item" v-for='item,index in history_list' v-on:click='viewsupplier(index)'>
+                    <!-- {{item}} -->
+                    <!-- <div class="card-item"> -->
+                    <div class="col">
+                        <p class="count">{{(index+1)}}</p>
+                    </div>
+                    <div class="col-sm-11">
+                        <h6 class="name">data: {{item.data}}</h4>
+                        <h6 class="product_type">type: {{item.type}}</h5>
+                        <h6 class="supplier">time: {{item.time}}</h5>
+                    </div>
+                    <!-- </div> -->
+                </li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#content-post',
+            data: {
+                history_list: []
+            },
+            methods: {
+                initApp: function () {
+                    getHistory(this.setHistory)
+                },
+                setHistory: function (history_list) {
+                    this.history_list = history_list.reverse()
+                },
+                
+            }
+        })
+
+        app.initApp()
+    </script>
+</body>
+
+</html>

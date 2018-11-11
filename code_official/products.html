@@ -1,0 +1,174 @@
+<html>
+
+<head>
+    <title>StoreUp (Products)</title>
+    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.min.css">
+    <script src="resources/library/jquery-3.0.0.min.js"></script>
+    <script src="resources/bootstrap/js/bootstrap.min.js"></script>
+    <script src="resources/library/vue.js"></script>
+    <link rel="stylesheet" href="resources/css/main-style.css">
+    <script src="resources/js/datahandler.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top header">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">StoreUp (Products)</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container content" id="content-post">
+        <div id="modal-product" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add New Product</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" enctype="multipart/form-data">
+                            <p>product name</p>
+                            <input type="text" name="name" class="input" v-model="data_input.name"><br><br>
+                            <p>supplier name</p>
+                            <!-- <input type="text" name="supplier" class="input" v-model="data_input.supplier"> -->
+                            <select class="input input-select input-supplier" v-model="data_input.supplier">
+                                <option v-for="item in supplier_list" v-bind:value="item.ID">{{item.Name}}</option>
+                            </select><br><br>
+                            <p>product type</p>
+                            <select class="input input-select input-establishment" v-model="data_input.type">
+                                <option v-for="item in product_type">{{item}}</option>
+                            </select>
+                            <!-- <input type="text" name="type" class="input"><br><br> -->
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="onAddProduct()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="modal-supplier" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Product Suppliers</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="info-body" v-if="curr_supplier != null">
+                            <h4 class="info">{{curr_supplier.Name}}</h4>
+                            <h7 class="info">Contact Number: {{curr_supplier.ContactNumber}}</h7>
+                            <h7 class="info">Contact Person: {{curr_supplier.Contact}}</h7>
+                            <h7 class="info">Tin: {{curr_supplier.Tin}}</h7>
+                            <h7 class="info">Address: {{curr_supplier.Address}}</h7>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-default" href="suppliers.html">Add
+                            New Supplier</a>
+                        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="data-table">
+            <ul class="data-list">
+                <li class="data-list-item row card-item" v-for='item,index in product_list' v-on:click='viewsupplier(index)'>
+                    <!-- {{item}} -->
+                    <!-- <div class="card-item"> -->
+                    <div class="col">
+                        <p class="count">{{(index+1)}}</p>
+                    </div>
+                    <div class="col-sm-11">
+                        <h4 class="name">{{item.Name}}</h4>
+                        <h5 class="product_type">product type: {{item.Type}}</h5>
+                        <h5 class="supplier">supplier name: {{item.Supplier}}</h5>
+                    </div>
+                    <!-- </div> -->
+                </li>
+            </ul>
+        </div>
+        <div class="fixed-action-btn">
+            <button type="button" id="add-report" class="button-view hide" data-toggle="modal" data-target="#modal-supplier">
+            </button>
+            <button type="button" id="add-report" class="button-view" data-toggle="modal" data-target="#modal-product">add
+                report
+            </button>
+        </div>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#content-post',
+            data: {
+                product_type: [
+                    "electronics",
+                    "spare parts",
+                    "machine parts",
+                    "equipment",
+                    "personal items",
+                    "vehicle parts",
+                    "printed materials",
+                    "stationery",
+                    "telecommunication equipment",
+                    "trade fair and exhibition exhibits",
+                    "bulk and packaged goods",
+                    "glass",
+                    "dry and liquid goods",
+                    "medical supplies",
+                    "packaged food and chocolate items",
+                    "cosmetics and personal hygiene products",
+                    "household and industrial appliances",
+                    "goods under customs control(temporary warehouses and warehouses of type 1)",
+                    "textiles(including such on racks and in cardboard boxes)",
+                    "dangerous good such us chemicals, paints, crop protection materials etc.(without classes 1 and 7)",
+                ],
+                product_list: ['asd', 'asd', 'ddd', 'dsds'],
+                supplier_list: [],
+                data_input: {
+                    name: null,
+                    supplier_name: null,
+                    type: null
+                },
+                curr_supplier: null
+            },
+            methods: {
+                initApp: function () {
+                    getProducts(this.setProducts)
+                    getSupplier("yes", this.setSuppliers)
+                },
+                setProducts: function (product_list) {
+                    this.product_list = product_list
+                },
+                setSuppliers: function (supplier_list) {
+                    this.supplier_list = supplier_list
+                },
+                viewsupplier: function (index) {
+                    this.curr_supplier = this.supplier_list[index]
+                    document.getElementById('add-report').click()
+                },
+                openSearchSupplier: function () {
+
+                },
+                onAddProduct: function () {
+                    console.log(this.data_input)
+
+                    addNewProduct(this.data_input, this.initApp)
+                    this.data_input = {
+                        name: null,
+                        supplier: null,
+                        type: null
+                    }
+                }
+            }
+        })
+
+        app.initApp()
+    </script>
+</body>
+
+</html>
